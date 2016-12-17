@@ -5,8 +5,8 @@ var showNotComplete = true; //false;
 /* global variables ***********************************************************/
 var canvas;
 var context;
-var width = 640; //[px]
-var height = 480; //[px]
+var width = 1024;//640; //[px]
+var height = 600;//480; //[px]
 
 var sounds; //object Sounds
 
@@ -31,7 +31,7 @@ var fps;
 
 var imagesLoad = 0; //kolik se nahrálo obrázků
 var images = {
-	"logo": new Image() 
+	"logo": new Image()
 };
 
 var currentLevel = 0; //číslo levelu
@@ -47,9 +47,9 @@ var menuItems = {
 	"Nová hra": function() {
 		menuOn = false;
 		//startGame();
-		
+
 		gameOn = true;
-	
+
 	    loadLevel(0);
 
 	   	/* add player */
@@ -58,7 +58,7 @@ var menuItems = {
 		player.sprite.setHealth(20);
 		player.sprite.x = width/2 - player.sprite.prototype.width;
 		player.sprite.y = height - player.sprite.prototype.height - 2;
-		player.sprite.ai.shotFreq = 200;	
+		player.sprite.ai.shotFreq = 200;
 	},
 	"O hře": function() {
 		drawAbout = true;
@@ -130,19 +130,19 @@ function Sounds() {
 
 Sounds.prototype.createAudio = function( filename ) {
 	var path = "./sounds/";
-	
+
 	var types = {
 		".ogg": "audio/ogg",
 		".mp3": "audio/mpeg"
 	};
-	
+
 	var sources = "";
 	for ( var i in types ) {
 		sources += "<source src=\""+ path + filename + i +"\" type=\""+ types[i] +"\"></source>";
 	}
-		
+
 	$("<audio id=\""+ filename +"\" preload=\"auto\">"+ sources +"</audio>").insertAfter("#audioelements");
-	
+
 	return $("#"+ filename).get(0);
 }
 
@@ -160,12 +160,12 @@ Sounds.prototype.loaded = function() {
             loaded += this.sounds[this.list[i]].buffered.end(0) / this.sounds[this.list[i]].duration;
         }
 	}
-		
+
 	if ( loaded == 0 ) {
 	    return 0;
 	} else {
 	    return parseInt(this.list.length / loaded) * 100;
-	}	
+	}
 }
 
 Sounds.prototype.play = function( sound ) {
@@ -173,7 +173,7 @@ Sounds.prototype.play = function( sound ) {
 	this.sounds[sound].currentTime = 0;
 
 	setTimeout(function(){
-		sounds.sounds[sound].play();		
+		sounds.sounds[sound].play();
 	}, 50);
 }
 
@@ -183,7 +183,7 @@ Sounds.prototype.playMusic = function()
 		this.currentTime = 0;
 		this.play();
 	});
-		
+
     this.sounds["Leviathan"].play();
 }
 
@@ -193,22 +193,22 @@ function Sprite(id, prototype)
 {
 	this.id = id;
 	this.prototype = prototype;
-	
+
 	this.x = 0;
 	this.y = 0;
-	
+
 	this.dx = 0;
 	this.dy = 0;
-	
+
 	this.startFrame = 0;
 	this.currentFrame = 0;
 	this.drawFrame = 0;
-	
+
 	this.createFrame = currentFrame;
-	
+
 	this.maxHealth = 0;
 	this.health = 0;
-	
+
 	this.ai = {
 		"flight": 0,
 		"stopOnY": 0,
@@ -234,11 +234,11 @@ Sprite.prototype.getShot = function( damage )
 		if ( this.ai.onDie != 0 ) {
 			this.ai.onDie();
 		}
-	
+
 		addSprite(protoExplosion);
 		last().x = this.x + this.prototype.width/2 - last().prototype.width/2;
 		last().y = this.y + this.prototype.height/2 - last().prototype.width/2;
-	
+
 		delete sprites[this.id];
 		return true;
 	}
@@ -249,13 +249,13 @@ Sprite.prototype.draw = function()
 	if (this.prototype == 0) {
 		return;
 	}
-		
+
 	if (this.prototype.frames > 0) {
 		context.drawImage(
 			this.prototype.frameArray[this.drawFrame],
 			Math.round(this.x),
 			Math.round(this.y)
-		);	
+		);
 	} else {
 		context.drawImage(
 			this.prototype.frame,
@@ -271,10 +271,10 @@ function SpritePrototype(frames, width, height, type)
 {
 	this.frames = frames;
 	this.type = type;
-	
+
 	this.height = height;
 	this.width = width;
-	
+
 	if (this.frames > 0) {
 		this.frameArray = new Array(this.frames);
 		for (var i = 0; i < this.frames; i++) {
@@ -287,9 +287,9 @@ function SpritePrototype(frames, width, height, type)
 		this.frame.width = width;
 		this.frame.height = height;
 	}
-	
+
 	this.currentFrame = 0;
-	
+
 }
 
 function createPrototypes()
@@ -300,7 +300,7 @@ function createPrototypes()
 	protoPlayer = new SpritePrototype(20, 20, 30, "player");
 	for (i = 0; i < protoPlayer.frames; i++) {
 		tempCtx = protoPlayer.frameArray[i].getContext("2d");
-				
+
 		tempCtx.strokeStyle = "#FFFFFF";
 		tempCtx.lineWidth = 2.25;
 		tempCtx.lineCup = "round";
@@ -311,18 +311,18 @@ function createPrototypes()
 			tempCtx.lineTo(20, 30);
 			tempCtx.lineTo(10, 0);
 		tempCtx.stroke();
-		
+
 		tempCtx.beginPath();
 			tempCtx.strokeStyle = "rgb("+i*12+", 0, 0)";
 			tempCtx.arc(10, 14, 3, 0, Math.PI*2, true);
-		tempCtx.stroke();	
+		tempCtx.stroke();
 	}
-	
+
 	protoSmallStar = new SpritePrototype(0, 1, 1, "smallStar");
 	tempCtx = protoSmallStar.frame.getContext("2d");
 	tempCtx.fillStyle = "#FFFFFF";
 	tempCtx.fillRect(0, 0, 1, 1);
-	
+
 	/*
 		animace exploze
 	*/
@@ -334,7 +334,7 @@ function createPrototypes()
 			tempCtx.fillRect( 100 + Math.cos(j)*i*3 , 100 + Math.sin(j)*i*3, 4 - i/20, 4 - i/20);
 		}
 	}
-	
+
 	protoBattleStar = new SpritePrototype(359*8, 36, 36, "battleStar");
 	for (i = 0; i < protoBattleStar.frames; i++) {
 		tempCtx = protoBattleStar.frameArray[i].getContext("2d");
@@ -345,22 +345,22 @@ function createPrototypes()
 		}
 		tempCtx.stroke();
 	}
-	
+
 	protoBigStar = new SpritePrototype(0, 2, 2, "bigStar");
 	tempCtx = protoBigStar.frame.getContext("2d");
 	tempCtx.fillStyle = "#FFFFFF";
 	tempCtx.fillRect(0, 0, 2, 2);
-	
+
 	protoEnemyShot = new SpritePrototype(18, 20, 20, "enemyShot");
 	for (i = 0; i < protoEnemyShot.frames; i++) {
 		tempCtx = protoEnemyShot.frameArray[i].getContext("2d");
 		tempCtx.strokeStyle = "rgb(255,"+i*10+","+i*10+")";
-		
+
 		tempCtx.save();
-				
+
 		tempCtx.translate(10, 10);
 		tempCtx.rotate( i * 20 * Math.PI / 180);
-		
+
 		var tempGrad = tempCtx.createLinearGradient(-5, -5, 5, 5);
 		tempGrad.addColorStop(0, "yellow");
 		tempGrad.addColorStop(0.25, "red");
@@ -368,12 +368,12 @@ function createPrototypes()
 		tempGrad.addColorStop(0.75, "red");
 		tempGrad.addColorStop(1, "yellow");
 		tempCtx.fillStyle = tempGrad;
-		
+
 		tempCtx.fillRect(-5,-5,10,10);
-		
+
 		tempCtx.restore();
 	}
-	
+
 	protoPlayerShotLaser = new SpritePrototype(10, 10, 60, "playerShotLaser");
 	for (i = 0; i < protoPlayerShotLaser.frames; i++) {
 		tempCtx = protoPlayerShotLaser.frameArray[i].getContext("2d");
@@ -389,7 +389,7 @@ function createPrototypes()
 			tempCtx.lineTo(0+i, 60);
 		tempCtx.stroke();
 	}
-	
+
 	protoRocket = new SpritePrototype(25, 50, 100, "rocket");
 	for (i = 0; i < protoRocket.frames; i++) {
 		tempCtx = protoRocket.frameArray[i].getContext("2d");
@@ -401,17 +401,17 @@ function createPrototypes()
 			tempCtx.lineTo(20, 12);
 			tempCtx.lineTo(25, 0);
 		tempCtx.stroke();
-		
+
 		for (var j = 100; j > 0; j--) {
 			tempCtx.fillStyle = "rgb("+ (255-j) +", "+ (255-j*2) +", 0)";
 			tempCtx.fillRect(25-(j/4)+2*Math.random()*(j/4), 13+j, 1, 1);
 		}
 	}
-	
+
 	protoWarCircle = new SpritePrototype(50, 50, 50, "warCircle");
 	for (i = 0; i < protoWarCircle.frames; i++) {
 		tempCtx = protoWarCircle.frameArray[i].getContext("2d");
-		
+
 		tempCtx.beginPath();
 			tempCtx.lineWidth = 2.25;
 			if (i < 25) {
@@ -458,16 +458,16 @@ function createPrototypes()
 			tempCtx.arc(25, 25, 4, Math.PI*(i*0.04), Math.PI*(i*0.04)+(Math.PI*1.5), true);
 		tempCtx.stroke();
 	}
-	
+
 	gradientBar = context.createLinearGradient(width - 120, height - 40, width - 20, height - 10);
 	gradientBar.addColorStop(0, "rgba(50,255,50,0.8)");
 	gradientBar.addColorStop(0.5, "rgba(255,255,50,0.8)");
 	gradientBar.addColorStop(1, "rgba(255,50,50,0.8)");
-	
+
 	if (showStars) {
 		generateStars(20);
 	}
-	
+
 	loadedSprites = true;
 }
 
@@ -478,19 +478,19 @@ function colision( a, b ) {
 	if ( !a || !b ) {
 		return false;
 	}
-	
+
 	return (
 		(
 			( a.x < b.x + b.prototype.width ) &&
 			( a.x > b.x ) &&
 			( a.y < b.y + b.prototype.height ) &&
 			( a.y > b.y )
-		) || (		
+		) || (
 			( a.x + a.prototype.height < b.x + b.prototype.width ) &&
 			( a.x + a.prototype.height > b.x ) &&
 			( a.y + a.prototype.height < b.y + b.prototype.height ) &&
 			( a.y + a.prototype.height > b.y )
-		) || (		
+		) || (
 			( a.x + a.prototype.width < b.x + b.prototype.width ) &&
 			( a.x + a.prototype.width > b.x ) &&
 			( a.y + a.prototype.width < b.y + b.prototype.height ) &&
@@ -511,9 +511,9 @@ function addSprite(prototype)
 			break;
 		}
 	}
-	
+
 	lastId = i;
-	
+
 	sprites[i] = new Sprite(i, prototype);
 }
 
@@ -530,7 +530,7 @@ function generateStars(amount)
 		} else {
 			addSprite(protoBigStar);
 		}
-	
+
 		last().x = Math.round(Math.random() * width);
 		last().dy = 1 + Math.random() * 10;
 	}
@@ -673,7 +673,7 @@ function handleSprites()
 {
 	for ( i in sprites ) {
 			var tempSprite = sprites[i];
-				
+
 			if (tempSprite.prototype.frames > 0) { //animated frames
 				tempSprite.drawFrame = ( currentFrame - tempSprite.createFrame ) % tempSprite.prototype.frames;
 			}
@@ -691,14 +691,14 @@ function handleSprites()
 			case "player":
 				if (player.blowback > 0) {
 					player.sprite.y += player.blowback;
-					
+
 					player.blowback -= 0.25;
-					
+
 					if (player.sprite.y + player.sprite.prototype.height > height) {
 						player.sprite.y = height - player.sprite.prototype.height;
 					}
 				}
-			
+
 				if (player.up && tempSprite.y > 0) {
 					tempSprite.y -= player.speed * moveSteps;
 				} else if (player.down && tempSprite.y < height - tempSprite.prototype.height) {
@@ -709,44 +709,44 @@ function handleSprites()
 				} else if (player.left && tempSprite.x > 0) {
 					tempSprite.x -= player.speed * moveSteps;
 				}
-				
+
 				/* ROCKET */
 				if (player.shotRocket && player.generator > 90) {
 					player.generator = 0;
 					player.shotRocket = false;
-					
+
 					if (soundsOn) {
 						sounds.play("Rocket");
 					}
-					
-					player.blowback += 7;		
-					
+
+					player.blowback += 7;
+
 					addSprite(protoRocket);
 					last().x = player.sprite.x - last().prototype.width;
 					last().y = player.sprite.y - last().prototype.height;
 					last().dy = -6;
 				}
-				
+
 				if (player.shooting && (tempSprite.ai.lastShot + tempSprite.ai.shotFreq) < startTime && player.generator > 20) {
 					player.generator -= 40;
-				
-				
+
+
 					//TODO: multiple sounds
 					if (soundsOn) {
-						sounds.play("LaserShot"+ lastLaserSound);	
+						sounds.play("LaserShot"+ lastLaserSound);
 						lastLaserSound++;
 						if (lastLaserSound == laserSounds) {
 							lastLaserSound = 1;
 						}
 					}
-				 
+
 					player.blowback += 1.5;
-				
+
 					addSprite(protoPlayerShotLaser);
 					last().x = player.sprite.x + last().prototype.width/2;
 					last().y = player.sprite.y - last().prototype.height;
 					last().dy = -6;
-				
+
 					tempSprite.ai.lastShot = startTime;
 				}
 				break;
@@ -773,14 +773,14 @@ function handleSprites()
 				if (tempSprite.y + tempSprite.prototype.height < 0) {
 					delete sprites[tempSprite.id];
 				}
-				
+
 				for (j in sprites) {
 					if ( ( sprites[j].prototype.type == "warCircle" || sprites[j].prototype.type == "battleStar" ) && colision( tempSprite, sprites[j] ) ) {
 						sprites[j].getShot(1);
 						delete sprites[tempSprite.id];
 					}
 				}
-				
+
 				break;
 			case "enemyShot":
 				if (tempSprite.y > height || tempSprite.y < 0 || tempSprite.x > width || tempSprite.x < 0 ) {
@@ -790,38 +790,38 @@ function handleSprites()
 				if ( colision( tempSprite, player.sprite ) ) {
 					delete sprites[tempSprite.id];
 					player.sprite.health--;
-					
+
 					if ( player.sprite.health < 0 ) {
 						gameOver = true;
-						
+
 						return;
 					}
 				}
-				
+
 				break;
 			case "battleStar":
 				if (tempSprite.y > height) {
 					delete sprites[tempSprite.id];
 				}
 			case "warCircle":
-					
+
 				if ( tempSprite.ai.shotFreq && (tempSprite.ai.lastShot + tempSprite.ai.shotFreq) < currentFrame && (tempSprite.createFrame + tempSprite.ai.shootingDelay) < currentFrame ) {
-					
+
 					var sx = tempSprite.x + tempSprite.prototype.width/2;
 					var sy = tempSprite.y + tempSprite.prototype.height/2;
-				
+
 					addSprite(protoEnemyShot);
 					last().x = sx;
 					last().y = sy;
-				
+
 					var px = player.sprite.x - 15 + Math.random()*30 + player.sprite.prototype.width/2;
 					var py = player.sprite.y - 15 + Math.random()*30 + player.sprite.prototype.height/2;
-				
+
 					var vx = px - sx;
 					var vy = py - sy;
-				
-					var distance = Math.sqrt((vx * vx) + (vy * vy)); 
-				
+
+					var distance = Math.sqrt((vx * vx) + (vy * vy));
+
 					last().dx = (vx * tempSprite.ai.shootSpeed) / distance;
 					last().dy = (vy * tempSprite.ai.shootSpeed) / distance;
 
@@ -832,7 +832,7 @@ function handleSprites()
 				break;
 			}
 
-			tempSprite.draw();	
+			tempSprite.draw();
 	}
 }
 
@@ -858,16 +858,16 @@ function loop()
 	} else if ( gameOver ) {
 		context.font = "bold 42px Ubuntu";
 		context.fillStyle = "rgba(255, 255, 255, 0.1)";
-		context.fillText("Prohráls!", (width/2)-130, (height/2));		
+		context.fillText("Prohráls!", (width/2)-130, (height/2));
 	} else if ( gameWin ) {
 		context.font = "bold 42px Ubuntu";
 		context.fillStyle = "rgba(255, 255, 255, 0.1)";
-		context.fillText("Vyhráls!", (width/2)-110, (height/2));		
+		context.fillText("Vyhráls!", (width/2)-110, (height/2));
 	} else {
-	
+
 		context.fillStyle = "rgba(0, 0, 0, 0.6)";
 		context.fillRect(0, 0, width, height);
-		
+
 		if (gameOn) {
 			gameFrame += moveSteps;
 			levelEvents();
@@ -876,7 +876,7 @@ function loop()
         if ( !gameOn && !menuOn && !drawAbout && !drawLicense ) {
 
 		    loadedSounds = sounds.loaded();
-			    
+
 		    if ( loadedSounds == 100 ) {
 		        setTimeout(function() {
 		            if (soundsOn) {
@@ -889,66 +889,66 @@ function loop()
    	                	menuOn = true;
     	            }
 	            }, 750);
-			} 
-        
+			}
+
             if ( notComplete && showNotComplete ) {
-            
+
                 context.fillStyle = "rgba("+ Math.abs(255-(currentFrame%(255*2))) +", "+ (255-Math.abs(255-(currentFrame%(255*2)))) +", "+ (255-Math.abs(255-(currentFrame%(255*2)))) +", 0.8)";
-                context.font = "bold 12px monospace";				
+                context.font = "bold 12px monospace";
 	            context.fillText("Tato aplikace je součástí maturitní práce Tomáše Nesrovnala.", 50, 300);
 	            context.fillText("Ukazuje řešení popsané v práci,  ", 50, 325);
 	            context.fillText("tedy poletující sprity, zvuk a stisk kláves (P pro pauzu). ", 100, 350);
 	            context.fillText("Spuštění celé aplikace bude součástí prezentace.", 50, 375);
 	            context.fillText("Zdrojový kód, včetně herní logiky je součástí toho dokumentu (CTRL + U).", 50, 400);
 	        } else {
-    			context.fillStyle = "white";				
+    			context.fillStyle = "white";
 	    		context.fillText("Načteno: "+ loadedSounds +"%", 250, 250);
 	        }
 
         }
-	
+
 		handleSprites();
-		
+
 		if (gameOn && player.generator < player.maxGenerator) {
 			player.generator += player.generatorSpeed * ((player.generator + 25) / 100) * moveSteps;
 		}
-		
+
 	}
 
 	if (gameOn && !gameOver) {
 		/* info bars */
 		context.fillStyle = gradientBar;
-		
-		var generatorLength = (100 / player.maxGenerator) * player.generator;	
+
+		var generatorLength = (100 / player.maxGenerator) * player.generator;
 		if (generatorLength > 0) {
 			context.fillRect(width - 120 + (100 - generatorLength), height - 20, generatorLength, 10);
 		}
-	
+
 		var livesLength = (100 / player.sprite.maxHealth) * player.sprite.health;
 		if (livesLength > 0) {
 			context.fillRect(width - 120 + (100 - livesLength), height - 40, livesLength, 10);
 		}
-		
+
 		/* rocket status */
 		if (player.shotRocket) {
 			context.fillStyle = "rgba(255, 0, 0, 0.5)";
 			context.fillRect(width - 120, height - 20, 2, 10);
 		}
-		
+
 	}
 
 	if (menuOn) {
 		drawMenu();
 	} else if ( drawAbout ) {
 		context.fillStyle = "rgba("+ Math.abs(255-(currentFrame%(255*2))) +", "+ (255-Math.abs(255-(currentFrame%(255*2)))) +", "+ (255-Math.abs(255-(currentFrame%(255*2)))) +", 0.8)";
-        context.font = "bold 12px monospace";				
+        context.font = "bold 12px monospace";
 	    context.fillText("Tato aplikace je součástí maturitní práce Tomáše Nesrovnala.", 50, 100);
 	    context.fillText("Ukazuje řešení popsané v práci,  ", 50, 125);
 	    context.fillText("tedy poletující sprity, zvuk a stisk kláves. ", 100, 150);
         context.fillText("Zdrojový kód, včetně herní logiky je součástí toho dokumentu (CTRL + U).", 50, 175);
 	} else if ( drawLicense ) {
 		context.fillStyle = "rgba("+ Math.abs(255-(currentFrame%(255*2))) +", "+ (255-Math.abs(255-(currentFrame%(255*2)))) +", "+ (255-Math.abs(255-(currentFrame%(255*2)))) +", 0.8)";
-        context.font = "bold 12px monospace";				
+        context.font = "bold 12px monospace";
 	    context.fillText('Aplikace je pod: http://creativecommons.org/licenses/by/3.0/cz', 50, 100);
 	    context.fillText("Zvuky:  ", 50, 125);
 	    context.fillText('LaserShot: http://www.freesound.org/samplesViewSingle.php?id=39459', 100, 150);
@@ -971,14 +971,15 @@ function loop()
 		context.font = "bold 12px monospace";
 		context.fillStyle = "white";
     context.fillText("fps: "+fps, 10, height-20);
-		
+
 	}
-	
+
 
 	lastTime = startTime;
 
 	setTimeout(loop, 20);
 }
+
 
 $(document).keydown(function(event)
 {
@@ -989,16 +990,16 @@ $(document).keydown(function(event)
 	} else if ( (gameOver || gameWin) &&  event.keyCode == 13 ) {
 		delete player.sprite;
 		sprites = new Array();
-		
+
 		if (showStars) {
 			generateStars(20);
 		}
-		
+
 		gameFrame = 0;
 		menuOn = true;
 		gameOn = false;
 		gameOver = false;
-		gameWin = false;	
+		gameWin = false;
 	} else {
 
 	switch (event.keyCode) {
@@ -1010,7 +1011,7 @@ $(document).keydown(function(event)
 	case 38:
 		player.up = true;
 		player.down = false;
-		
+
 		if (menuOn) {
 			menuActiveItem--;
 		}
@@ -1018,7 +1019,7 @@ $(document).keydown(function(event)
 	case 40:
 		player.down = true;
 		player.up = false;
-		
+
 		if (menuOn) {
 			menuActiveItem++;
 		}
@@ -1111,27 +1112,27 @@ function drawMenu()
 	        context.shadowBlur = 3;
 	        context.shadowColor = "white";
 			context.fillStyle = "rgba(0, 0, 0, 0.5)";
-			
+
 			if (menuGo) {
 				context.fillStyle = "rgba(255, 255, 255, 0.8)";
 				context.fillRect(0, 0, width, height);
-				
+
 				menuGo = false;
-				
+
 				context.restore();
-				
+
 				if (soundsOn) {
 					sounds.play("Ding");
 				}
-				
+
 				menuItems[i]();
-				
-				return;			
+
+				return;
 			}
 		} else {
 			context.fillStyle = "rgba(255, 255, 255, 0.6)";
 		}
-		
+
 		context.fillText(i, 250, 150 + j*50);
 		context.restore();
 
@@ -1148,35 +1149,36 @@ function load() {
 	if (soundsOn) {
 		sounds.init();
 	}
-	
+
 	for (var i in images) {
 		var file = "./images/"+ i +".png";
-		
+
 		images[i].src = file;
-		
-		$(images[i]).load(function() {
+
+		// $(images[i]).load(function() {
+		$(images[i]).on('load', function() {
 			imagesLoad++;
 		});
-		
 	}
-	
 }
 
-$(document).ready(function() {
+$(window).on('load', function() {
 	canvas = document.createElement("canvas");
 	canvas.width = width;
 	canvas.height = height;
 	canvas.setAttribute("style", "background: #000000; border: 1px solid #666666;");
 	document.body.appendChild(canvas);
 	context = canvas.getContext("2d");
-	
-	if ( soundsOn ) { 
+
+	if ( soundsOn ) {
 		sounds = new Sounds();
 	}
-		
+
 	createPrototypes();
 	load();
-		
+
 	startGlobal = jQuery.now();
 	loop();
+
 });
+
